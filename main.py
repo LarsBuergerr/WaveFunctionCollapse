@@ -1,0 +1,1 @@
+print("Welome to this Wave Function Collapse simulation")
