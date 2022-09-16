@@ -4,16 +4,38 @@ import random
 import time
 import sys
 
-valid_states = {
-    's1': {'s2', 's4', 's5'},
-    's2': {'s1', 's4', 's5'},
-    's3': {'s1', 's2', 's4'},
-    's4': {'s1', 's2', 's5'},
-    's5': {'s2', 's4', 's5'},
+
+valid_bot = {
+    ' ': {' ', '-'},
+    '|': {'+', '|', ' '},
+    '-': {' ', '-'},
+    '+': {'+', '|', ' '},
+}
+
+valid_top = {
+    ' ': {' ', '-'},
+    '|': {'+', '|', ' '},
+    '-': {' ', '-'},
+    '+': {'+', '|', ' '},
+}
+
+valid_left = {
+    ' ': {' ', '|'},
+    '|': {'|', ' '},
+    '+': {'+', '-', ' '},
+    '-': {'-', '+', ' '},
+}
+
+valid_right = {
+    ' ': {' ', '|'},
+    '|': {'|', ' '},
+    '+': {'+', '-', ' '},
+    '-': {'-', '+', ' '},
 }
 
 
 def calc_neighbours(o):
+    c = 0
     ox = o.x
     oy = o.y
 
@@ -25,7 +47,12 @@ def calc_neighbours(o):
     for cords in neighbour_cords:
         if (0 <= cords[0] <= ROWS - 1) and (0 <= cords[1] <= COLUMNS - 1) \
                 and len(matrix[cords[0]][cords[1]].states) > 1:
-            matrix[cords[0]][cords[1]].calc_new_states(o.collapsed_state)
+
+                matrix[cords[0]][cords[1]].calc_new_states(o.collapsed_state, c)
+        print(c)
+        c += 1
+
+
 
 def collapse_lowest():
     selected = None
@@ -67,7 +94,8 @@ def collapse_lowest():
 def print_matrix():
     for i in range(0, ROWS):
         for j in range(0, COLUMNS):
-            print(len(matrix[i][j].states), end=' ') if len(matrix[i][j].states) > 1 else print('O', end=' ')
+            print(len(matrix[i][j].states), end=' ') if len(matrix[i][j].states) > 1 else \
+                print(matrix[i][j].collapsed_state, end=' ')
         print()
 
 
@@ -79,17 +107,27 @@ class Obj:
         self.x = x
         self.y = y
 
-    states = {'s1', 's2', 's3', 's4', 's5'}
+    states = {'-', '|', ' ', '+'}
 
-    def calc_new_states(self, state):
-        self.states = self.states & valid_states.get(state)
+    def calc_new_states(self, state, zk):
+        if zk == 0:
+            self.states = self.states & valid_bot.get(state)
+
+        elif zk == 1:
+            self.states = self.states & valid_right.get(state)
+
+        elif zk == 2:
+            self.states = self.states & valid_top.get(state)
+
+        elif zk == 3:
+            self.states = self.states & valid_left.get(state)
 
 
 if __name__ == '__main__':
-    ROWS = 40
-    COLUMNS = 40
+    ROWS = 3
+    COLUMNS = 3
     MATRIX_ENTRIES = ROWS * COLUMNS
-    TOTAL_STATES = 5
+    TOTAL_STATES = 4
     total_collapsed = 1
 
     matrix = [[0] * COLUMNS for _ in range(ROWS)]
@@ -104,9 +142,9 @@ if __name__ == '__main__':
     randx = random.randint(0, ROWS - 1)
     randy = random.randint(0, COLUMNS - 1)
 
-    matrix[randx][randy].states = {'s1'}
+    matrix[randx][randy].states = {'+'}
     matrix[randx][randy].collapsed = True
-    matrix[randx][randy].collapsed_state = 's3'
+    matrix[randx][randy].collapsed_state = '+'
 
     calc_neighbours(matrix[randx][randy])
 
