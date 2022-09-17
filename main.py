@@ -49,7 +49,6 @@ def calc_neighbours(o):
                 and len(matrix[cords[0]][cords[1]].states) > 1:
 
                 matrix[cords[0]][cords[1]].calc_new_states(o.collapsed_state, c)
-        print(c)
         c += 1
 
 
@@ -61,13 +60,13 @@ def collapse_lowest():
 
     for i in range(0, ROWS):
         for j in range(0, COLUMNS):
-            if matrix[i][j] == 1 and not matrix[i][j].collapsed:
+            if len(matrix[i][j].states) == 1 and not matrix[i][j].collapsed:
                 lowest = 1
                 matrix[i][j].collapsed = True
                 matrix[i][j].collapsed_state = matrix[i][j].states.pop()
                 l.append(matrix[i][j])
 
-            elif len(matrix[i][j].states) < lowest and len(matrix[i][j].states) != 1:
+            elif len(matrix[i][j].states) < lowest and len(matrix[i][j].states) > 1:
                 lowest = len(matrix[i][j].states)
 
     if lowest == 1:
@@ -85,16 +84,24 @@ def collapse_lowest():
 
         selected = l[rand]
         selected.collapsed = True
+        print(selected.states)
         ran = random.choice(list(selected.states))
-        selected.states = {ran}
+        print(ran)
         selected.collapsed_state = ran
+        selected.states = {ran}
+        print(selected.collapsed_state)
+        print(selected)
+        print()
         return [selected]
 
 
 def print_matrix():
     for i in range(0, ROWS):
         for j in range(0, COLUMNS):
-            print(len(matrix[i][j].states), end=' ') if len(matrix[i][j].states) > 1 else \
+
+            if len(matrix[i][j].states) > 1:
+                print(len(matrix[i][j].states), end=' ')
+            else:
                 print(matrix[i][j].collapsed_state, end=' ')
         print()
 
@@ -122,10 +129,9 @@ class Obj:
         elif zk == 3:
             self.states = self.states & valid_left.get(state)
 
-
 if __name__ == '__main__':
-    ROWS = 3
-    COLUMNS = 3
+    ROWS = 40
+    COLUMNS = 40
     MATRIX_ENTRIES = ROWS * COLUMNS
     TOTAL_STATES = 4
     total_collapsed = 1
@@ -153,6 +159,9 @@ if __name__ == '__main__':
     while total_collapsed < MATRIX_ENTRIES:
         c = collapse_lowest()
 
+        print("after collapse")
+        print_matrix()
+
         if not c: break
 
         count = len(c)
@@ -161,8 +170,9 @@ if __name__ == '__main__':
         for entry in c:
             calc_neighbours(entry)
 
+        print("after calculating neighbours")
         print_matrix()
         print()
-        os.system('clear')
+        print()
 
     print_matrix()
