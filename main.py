@@ -4,33 +4,61 @@ import random
 import time
 import sys
 
+valid_top = {
+    '║': {'║', '╣', '╝', '╚', '╩', '╠'},
+    '╣': {'║', '╣', '╝', '╚', '╩', '╠'},
+    '╗': {'║', '╣', '╝', '╚', '╩', '╠'},
+    '╔': {'║', '╣', '╝', '╚', '╩', '╠'},
+    '╝': {'╗', '╔', '═', '╦'},
+    '╚': {'╗', '╔', '═', '╦'},
+    '╩': {'╗', '╔', '═', '╦'},
+    '╦': {'║', '╣', '╝', '╚', '╩', '╠'},
+    '╠': {'║', '╣', '╝', '╚', '╩', '╠'},
+    '═': {'╗', '╔', '═', '╦'},
+    #'╬': {'║', '╣', '╝', '╚', '╩', '╠'},
+
+}
 
 valid_bot = {
-    ' ': {' ', '-'},
-    '|': {'+', '|', ' '},
-    '-': {' ', '-'},
-    '+': {'+', '|', ' '},
-}
-
-valid_top = {
-    ' ': {' ', '-'},
-    '|': {'+', '|', ' '},
-    '-': {' ', '-'},
-    '+': {'+', '|', ' '},
-}
-
-valid_left = {
-    ' ': {' ', '|'},
-    '|': {'|', ' '},
-    '+': {'+', '-', ' '},
-    '-': {'-', '+', ' '},
+    '║': {'║', '╣', '╠', '╦', '╔', '╗'},
+    '╣': {'║', '╣', '╠', '╦', '╔', '╗'},
+    '╗': {'╝', '╚', '╩', '═'},
+    '╔': {'╝', '╚', '╩', '═'},
+    '╝': {'║', '╣', '╠', '╦', '╔', '╗'},
+    '╚': {'║', '╣', '╠', '╦', '╔', '╗'},
+    '╩': {'║', '╣', '╠', '╦', '╔', '╗'},
+    '╦': {'╝', '╚', '╩', '═'},
+    '╠': {'║', '╣', '╠', '╦', '╔', '╗'},
+    '═': {'╝', '╚', '╩', '═'},
+    #'╬':{'║', '╣', '╠', '╦', '╔', '╗'},
 }
 
 valid_right = {
-    ' ': {' ', '|'},
-    '|': {'|', ' '},
-    '+': {'+', '-', ' '},
-    '-': {'-', '+', ' '},
+    '║': {'╝', '╣', '║', '╗'},
+    '╣': {'╚', '╩', '╦', '╔', '╠', '═'},
+    '╗': {'╚', '╩', '╦', '╔', '╠', '═'},
+    '╔': {'╝', '╣', '║', '╗'},
+    '╝': {'╚', '╩', '╦', '╔', '╠', '═'},
+    '╚': {'╝', '╣', '║', '╗'},
+    '╩': {'╚', '╩', '╦', '╔', '╠', '═'},
+    '╦': {'╚', '╩', '╦', '╔', '╠', '═'},
+    '╠': {'╝', '╣', '║', '╗'},
+    '═': {'╚', '╩', '╦', '╔', '╠', '═'},
+    #'╬': {'╚', '╩', '╦', '╔', '╠', '═'},
+}
+
+valid_left = {
+    '║': {'╚', '║', '╠', '╔'},
+    '╣': {'╚', '║', '╠', '╔'},
+    '╗': {'╚', '║', '╠', '╔'},
+    '╔': {'╝', '╩', '╦', '═', '╗', '╣'},
+    '╝': {'╚', '║', '╠', '╔'},
+    '╚': {'╝', '╩', '╦', '═', '╗', '╣'},
+    '╩': {'╝', '╩', '╦', '═', '╗', '╣'},
+    '╦': {'╝', '╩', '╦', '═', '╗', '╣'},
+    '╠': {'╝', '╩', '╦', '═', '╗', '╣'},
+    '═': {'╝', '╩', '╦', '═', '╗', '╣'},
+    #'╬': {'╝', '╩', '╦', '═', '╗', '╣'},
 }
 
 
@@ -84,14 +112,9 @@ def collapse_lowest():
 
         selected = l[rand]
         selected.collapsed = True
-        print(selected.states)
         ran = random.choice(list(selected.states))
-        print(ran)
         selected.collapsed_state = ran
         selected.states = {ran}
-        print(selected.collapsed_state)
-        print(selected)
-        print()
         return [selected]
 
 
@@ -100,9 +123,9 @@ def print_matrix():
         for j in range(0, COLUMNS):
 
             if len(matrix[i][j].states) > 1:
-                print(len(matrix[i][j].states), end=' ')
+                print(len(matrix[i][j].states), end='')
             else:
-                print(matrix[i][j].collapsed_state, end=' ')
+                print(matrix[i][j].collapsed_state, end='')
         print()
 
 
@@ -114,7 +137,7 @@ class Obj:
         self.x = x
         self.y = y
 
-    states = {'-', '|', ' ', '+'}
+    states = {'║', '╣', '╗', '╝', '╚', '╔', '╩', '╦', '╠', '═'}
 
     def calc_new_states(self, state, zk):
         if zk == 0:
@@ -130,10 +153,10 @@ class Obj:
             self.states = self.states & valid_left.get(state)
 
 if __name__ == '__main__':
-    ROWS = 40
-    COLUMNS = 40
+    ROWS = 50
+    COLUMNS = 100
     MATRIX_ENTRIES = ROWS * COLUMNS
-    TOTAL_STATES = 4
+    TOTAL_STATES = 11
     total_collapsed = 1
 
     matrix = [[0] * COLUMNS for _ in range(ROWS)]
@@ -148,9 +171,9 @@ if __name__ == '__main__':
     randx = random.randint(0, ROWS - 1)
     randy = random.randint(0, COLUMNS - 1)
 
-    matrix[randx][randy].states = {'+'}
+    matrix[randx][randy].states = {'╠'}
     matrix[randx][randy].collapsed = True
-    matrix[randx][randy].collapsed_state = '+'
+    matrix[randx][randy].collapsed_state = '╠'
 
     calc_neighbours(matrix[randx][randy])
 
@@ -158,9 +181,6 @@ if __name__ == '__main__':
 
     while total_collapsed < MATRIX_ENTRIES:
         c = collapse_lowest()
-
-        print("after collapse")
-        print_matrix()
 
         if not c: break
 
@@ -170,9 +190,7 @@ if __name__ == '__main__':
         for entry in c:
             calc_neighbours(entry)
 
-        print("after calculating neighbours")
-        print_matrix()
-        print()
-        print()
+        #print_matrix()
+        #os.system('cls')
 
     print_matrix()
