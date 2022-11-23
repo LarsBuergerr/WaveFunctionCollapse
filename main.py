@@ -118,15 +118,18 @@ def collapse_lowest():
         return [selected]
 
 
-def print_matrix():
+def create_matrix_string():
+    matrix_string = ""
     for i in range(0, ROWS):
         for j in range(0, COLUMNS):
 
             if len(matrix[i][j].states) > 1:
-                print('X', end='')
+                matrix_string += "X"
             else:
-                print(matrix[i][j].collapsed_state, end='')
-        print()
+                matrix_string += matrix[i][j].collapsed_state if matrix[i][j].collapsed_state is not None else " "
+        matrix_string += "\n"
+
+    return matrix_string
 
 
 class Obj:
@@ -153,8 +156,8 @@ class Obj:
             self.states = self.states & valid_left.get(state)
 
 if __name__ == '__main__':
-    ROWS = 50
-    COLUMNS = 100
+    ROWS = 30
+    COLUMNS = 150
     MATRIX_ENTRIES = ROWS * COLUMNS
     TOTAL_STATES = 11
     total_collapsed = 1
@@ -165,7 +168,7 @@ if __name__ == '__main__':
         for j in range(0, COLUMNS):
             matrix[i][j] = Obj(i, j)
 
-    print_matrix()
+    print(create_matrix_string())
 
     while total_collapsed <= MATRIX_ENTRIES:
         c = collapse_lowest()
@@ -178,7 +181,10 @@ if __name__ == '__main__':
         for entry in c:
             calc_neighbours(entry)
 
-        #print_matrix()
-        #time.sleep(0.03)
+        sys.stdout.write(create_matrix_string())
+        sys.stdout.flush()
 
-    print_matrix()
+        # print(create_matrix_string())
+        # os.system('clear')
+
+    print(create_matrix_string())
