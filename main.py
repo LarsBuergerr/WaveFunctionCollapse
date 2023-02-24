@@ -157,7 +157,7 @@ class Obj:
 
 if __name__ == '__main__':
     ROWS = 30
-    COLUMNS = 150
+    COLUMNS = 100
     MATRIX_ENTRIES = ROWS * COLUMNS
     TOTAL_STATES = 11
     total_collapsed = 1
