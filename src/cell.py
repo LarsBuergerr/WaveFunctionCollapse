@@ -1,12 +1,12 @@
 
 class Cell():
     
-    def __init__(self, x, y, value, allowed_values):
+    def __init__(self, x, y, value, allowed_states):
         
         self._x = x
         self._y = y
         self._value = value
-        self._allowed_values = allowed_values
+        self._allowed_values = allowed_states
         self._collapsed = False
     
     def __str__(self):

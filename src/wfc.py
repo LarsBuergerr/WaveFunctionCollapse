@@ -1,23 +1,42 @@
 import random
+import json
 
 from cell import Cell
 from matrix import Matrix
-from rules import *
+from state import State
 
 class WFC():
     
-    def __init__(self, rows, cols, states):
+    def __init__(self, rows, cols, image_path):
         
         self.rows = rows
         self.cols = cols
-        self.states = states
-        self.matrix = Matrix(rows, cols, states)     
+        self.rules = self.define_ruleset()
+        self.matrix = Matrix(rows, cols, self.rules)
+
+
+    def define_ruleset(self):
+        f = open('rules.json', encoding='utf-8', mode='r')
+        data = json.load(f)
+        
+        # define ruleset
+        ruleset = []
+        
+        for entry in data:
+            entry_data = data[entry]
+            
+            for i in range(4):
+                state = State(str(entry) + "_" + str(i), "../images/circuit/" + str(entry) + ".png", i, entry_data)
+                ruleset.append(state)
+                
+        return ruleset
+
 
     def find_lowest_entropy(self):
         """Find the cell with the lowest entropy (the one with the least amount of states)"""
 
         lowest_entropies = []
-        lowest_score = len(self.states) + 1
+        lowest_score = len(self.rules) + 1
 
         for row in self.matrix.m:
             for cell in row:
@@ -39,18 +58,18 @@ class WFC():
         cell.allowed_values = {cell.value}
         cell.collapsed = True
 
-
+    # @TODO remove int numbs for directions
     def get_neighbours(self, cell):
         """Get the neighbours of the cell"""
         neighbours = []
         if cell.x > 0:
-            neighbours.append((self.matrix.m[cell.x - 1][cell.y], valid_top)) # top neighbour
+            neighbours.append((self.matrix.m[cell.x - 1][cell.y], 0)) # top neighbour
         if cell.x < self.rows - 1:
-            neighbours.append((self.matrix.m[cell.x + 1][cell.y], valid_bot)) # bottom neighbour
+            neighbours.append((self.matrix.m[cell.x + 1][cell.y], 1)) # bottom neighbour
         if cell.y > 0:
-            neighbours.append((self.matrix.m[cell.x][cell.y - 1], valid_left)) # left neighbour
+            neighbours.append((self.matrix.m[cell.x][cell.y - 1], 2)) # left neighbour
         if cell.y < self.cols - 1:
-            neighbours.append((self.matrix.m[cell.x][cell.y + 1], valid_right)) # right neighbour
+            neighbours.append((self.matrix.m[cell.x][cell.y + 1], 3)) # right neighbour
         return neighbours
         
         
@@ -62,19 +81,28 @@ class WFC():
             
             if neighbour.collapsed:
                 continue
+
             # remove all values from the neighbour that are not allowed
-            neighbour.allowed_values = neighbour.allowed_values.intersection(direction[cell.value])
+            allowed_values = []
             
+            for state in neighbour.allowed_values:
+                if cell.value.side_rules[direction] == state.side_rules[(direction + 2) % 4]:
+                    allowed_values.append(state)
+                    
+            neighbour.allowed_values = allowed_values
+            
+            print(neighbour.allowed_values)
 
 if __name__ == '__main__':
-    wfc = WFC(100, 100, {'║', '╣', '╗', '╔', '╝', '╚', '╩', '╦', '╠', '═', '╬'})
     
-    entry_count = wfc.rows * wfc.cols
+    wfc = WFC(100, 100, None)
     
-    while entry_count > 0:
+    entry_num = wfc.cols * wfc.rows
+    
+    while entry_num > 0:
         cell = wfc.find_lowest_entropy()
         wfc.collapse(cell)
         wfc.update_neighbours(cell)
-        entry_count -= 1
-
-        print(wfc.matrix)
+        entry_num -= 1
+    
+    
