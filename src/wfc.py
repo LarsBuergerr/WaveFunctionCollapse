@@ -88,21 +88,37 @@ class WFC():
             for state in neighbour.allowed_values:
                 if cell.value.side_rules[direction] == state.side_rules[(direction + 2) % 4]:
                     allowed_values.append(state)
-                    
+                
             neighbour.allowed_values = allowed_values
-            
-            print(neighbour.allowed_values)
 
 if __name__ == '__main__':
     
-    wfc = WFC(100, 100, None)
+    wfc = WFC(3, 3, None)
+    for rule in wfc.rules:
+        print(rule)
     
     entry_num = wfc.cols * wfc.rows
+
+    cell = wfc.find_lowest_entropy()
+    wfc.collapse(cell)
+    print("Collapsed cell: ", cell)
     
-    while entry_num > 0:
-        cell = wfc.find_lowest_entropy()
-        wfc.collapse(cell)
-        wfc.update_neighbours(cell)
-        entry_num -= 1
+    print("Cell State: ", cell.value)
+    
+    wfc.update_neighbours(cell)
+    
+    print("Neighbours: ", wfc.get_neighbours(cell))
+    
+    for neighbour in wfc.get_neighbours(cell):
+        print("Neighbour: ", neighbour[0])
+        
+        for state in neighbour[0].allowed_values:
+            print("State: ", state)
+    
+    
+    
+    wfc.collapse(cell)
+    wfc.update_neighbours(cell)
+    entry_num -= 1
     
     

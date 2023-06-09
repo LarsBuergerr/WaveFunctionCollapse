@@ -16,7 +16,7 @@ class Matrix():
         for row in range(self.rows):
             matrix.append([])
             for col in range(self.cols):
-                matrix[row].append(Cell(row, col, None, set(self.states)))
+                matrix[row].append(Cell(row, col, None, self.states))
         return matrix
     
     def __str__(self):
