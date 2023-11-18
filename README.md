@@ -1,5 +1,9 @@
 Simple Wave Function Collapse simulation.
 
+{
+    "0": ["AAA", "AAA", "AAA", "AAA"],
+    "1": ["BBB", "BBB", "BBB", "BBB"],
+    "2": ["BBB", "BCB", "BBB", "BBB"],
     "3": ["BBB", "BDB", "BBB", "BDB"],
     "4": ["ABB", "BCB", "BBA", "AAA"],
     "5": ["ABB", "BBB", "BBB", "BBA"],
@@ -10,3 +14,4 @@ Simple Wave Function Collapse simulation.
     "10": ["BCB", "BCB", "BCB", "BCB"],
     "11": ["BCB", "BCB", "BBB", "BBB"],
     "12": ["BBB", "BCB", "BBB", "BCB"]
+}

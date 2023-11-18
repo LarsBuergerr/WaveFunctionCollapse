@@ -1,3 +1,5 @@
+import copy
+
 from cell import Cell
 
 class Matrix():
@@ -16,7 +18,7 @@ class Matrix():
         for row in range(self.rows):
             matrix.append([])
             for col in range(self.cols):
-                matrix[row].append(Cell(row, col, None, self.states))
+                matrix[row].append(Cell(row, col, None, copy.copy(self.states)))
         return matrix
     
     def __str__(self):
