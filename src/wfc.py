@@ -35,11 +35,6 @@ class WFC():
                 if not any(state.side_rules == rule.side_rules for rule in ruleset):
                     ruleset.append(state)
 
-        # remove rules that have the exact same side_rules
-
-
-        print(len(ruleset))  
-        for state in ruleset: print(state)
         return ruleset
 
 

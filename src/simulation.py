@@ -1,6 +1,7 @@
 import pygame
 import random
 import time
+import sys
 
 from wfc import WFC
 
@@ -10,37 +11,29 @@ class WFCSimulation():
         self.matrix_size = rows
         self.cell_size = cell_size
         self.window_size = rows * cell_size
-        # Initialize pygame
         pygame.init()
-
-        # Create the window
         self.window = pygame.display.set_mode((self.window_size, self.window_size))
 
     def run(self):
-        # Main game loop
         running = True
         current_cell = 0
 
-        while current_cell < self.matrix_size * self.matrix_size and running:
-            # Handle events
+        while current_cell < self.matrix_size * self.matrix_size:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_c and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                    running = False
 
-            # Clear the window
             self.window.fill((0, 0, 0))
 
-            # run one step of the wfc algorithm
             cell = self.wfc.find_lowest_entropy()
             self.wfc.collapse(cell)
             self.wfc.update_neighbours(cell)
 
-            # Draw the matrix
-
             for i in range(self.matrix_size):
                 for j in range(self.matrix_size):
                     if current_cell >= i * self.matrix_size + j:
-                        # Calculate the position of the current cell
                         x = j * self.cell_size
                         y = i * self.cell_size
 
@@ -50,19 +43,21 @@ class WFCSimulation():
                         else:
                             pygame.draw.rect(self.window, (0, 0, 0), (x, y, self.cell_size, self.cell_size))
 
-
-            # Update the display
             pygame.display.flip()
 
-            # Sleep for 0.1 seconds
             time.sleep(0.01)
-
-            # Increment the current cell counter
             current_cell += 1
 
-        time.sleep(10000)
-        # Quit the game
-        # pygame.quit()
+        # Keep the window open until the user closes it
+        waiting_for_exit = True
+        while waiting_for_exit:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    waiting_for_exit = False
+                elif event.type == pygame.KEYDOWN:
+                    waiting_for_exit = False
+
+        pygame.quit()
 
 # Usage example
 rows = 20
